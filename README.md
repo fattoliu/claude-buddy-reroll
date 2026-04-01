@@ -1,6 +1,9 @@
 # claude-buddy-reroll
 
-Reverse-engineered Claude Code `/buddy` pet system. Lets you find and apply any pet you want.
+> Reverse-engineered Claude Code's `/buddy` pet system — get the exact pet you want in under a second.
+
+![Claude Code](https://img.shields.io/badge/Claude%20Code-%3E%3D2.1.89-orange)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## How it works
 
@@ -51,3 +54,17 @@ node find-buddy-node.js --species duck --rarity legendary --shiny --apply
 - To restore: `cp ~/.claude.json.buddy-backup ~/.claude.json`
 - Legendary + shiny probability is ~0.01%, script finds a match in under 1 second
 - Requires Claude Code >= 2.1.89
+
+## How it was found
+
+The pet generation logic was extracted by running `strings` on the Claude Code binary and locating the relevant code at byte offset 73,602,652. Key findings:
+
+- Hardcoded salt: `friend-2026-401` (an April Fools' Day 2026 easter egg)
+- Hash function: `Bun.hash()` truncated to 32 bits — **not** standard FNV-1a (a common mistake in early community scripts)
+- PRNG: mulberry32
+
+Since generation is fully deterministic, brute-forcing a matching UUID takes milliseconds.
+
+---
+
+If this saved you from being stuck with a common blob, a ⭐ would be appreciated!
